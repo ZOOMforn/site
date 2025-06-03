@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8" /><title>Key System</title></head>
+<body>
+<h1>Sistema de Keys</h1>
+
+<button onclick="generate()">Gerar Key (1h)</button>
+<p id="key"></p>
+
+<input type="text" id="checkKey" placeholder="Digite a key" />
+<button onclick="check()">Checar Key</button>
+<p id="checkResult"></p>
+
+<script>
+async function generate() {
+  const res = await fetch('/api/generate', {
+    method: 'POST',
+    body: JSON.stringify({ duration: 3600000 }),
+  });
+  const data = await res.json();
+  document.getElementById('key').innerText = `Key: ${data.key} (Expira: ${new Date(data.expiresAt).toLocaleString()})`;
+}
+async function check() {
+  const key = document.getElementById('checkKey').value;
+  const res = await fetch(`/api/check?key=${encodeURIComponent(key)}`);
+  const text = await res.text();
+  document.getElementById('checkResult').innerText = text;
+}
+</script>
+</body>
+</html>
